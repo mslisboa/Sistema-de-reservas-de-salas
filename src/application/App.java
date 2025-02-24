@@ -1,5 +1,7 @@
 package application;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -18,6 +20,7 @@ public class App {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         
         List<Reserva> listaReservas = new ArrayList<>();
         Sala[] listaSalas = new Sala[NUMERO_DE_SALAS];
@@ -38,7 +41,52 @@ public class App {
             System.out.println(opc);
 
             if (opc == 'a') {
-                
+                System.out.println("\nSalas disponíveis:");
+
+                if (listaReservas.isEmpty()) { // Exibe todas as salas se não houver nenhuma reserva
+                    for (Sala sala : listaSalas) {
+                        System.out.println(sala.getNome() + " -> " + sala.getCapacidade() + " pessoas");
+                    }
+                } else { // Exibe apenas as salas disponíveis
+                    for (Sala sala : listaSalas) {
+                        if (!sala.isStatus()) {
+                            System.out.println(sala.getNome() + " -> " + sala.getCapacidade() + " pessoas");
+                        }
+                    }
+                }
+
+                System.out.print("\nQual sala deseja reservar?: ");
+                String salaEscolhida = sc.nextLine();
+                Sala salaReservada = null;
+
+                // Resgata o objeto referente a sala escolhida
+                for (Sala sala : listaSalas) {
+                    if (sala.getNome().equals(salaEscolhida)) {
+                        salaReservada = sala;
+                    }
+                }
+
+                System.out.print("Qual é o seu nome: ");
+                String nome = sc.nextLine();
+
+                System.out.print("Inicio da reserva (dd/MM/aaaa HH:mm): ");
+                LocalDateTime inicioReserva = LocalDateTime.parse(sc.nextLine(), formatoData);
+
+                System.out.print("Fim da resesrva (dd/MM/aaaa HH:mm): ");
+                LocalDateTime fimReserva = LocalDateTime.parse(sc.nextLine(), formatoData);
+
+                // Faz a reserva e atualiza o status da sala
+                listaReservas.add(new Reserva(salaReservada, inicioReserva, fimReserva, new Usuario(nome)));
+                salaReservada.setStatus(true);
+            }
+            else if (opc == 'b') { // Exibe as reservas realizadas
+                if (listaReservas.isEmpty()) {
+                    System.out.println("Não há reservas!");
+                } else {
+                    for (Reserva reserva : listaReservas) {
+                        System.out.println(reserva);
+                    }
+                }
             }
             else if (opc == 'e') {
                 laco = false;
