@@ -16,6 +16,7 @@ public class App {
     private static final int NUMERO_DE_SALAS = 10;
     private static final int CAPACIDADE_MAXIMA = 40;
     private static final int CAPACIDADE_MINIMA = 10;
+    
     public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
@@ -24,6 +25,7 @@ public class App {
         
         List<Reserva> listaReservas = new ArrayList<>();
         Sala[] listaSalas = new Sala[NUMERO_DE_SALAS];
+
         boolean laco = true;
 
         // Gera lista com 10 salas
@@ -40,18 +42,13 @@ public class App {
 
             System.out.println(opc);
 
-            if (opc == 'a') {
+            if (opc == 'a') { // Cria uma nova reserva
                 System.out.println("\nSalas disponíveis:");
 
-                if (listaReservas.isEmpty()) { // Exibe todas as salas se não houver nenhuma reserva
-                    for (Sala sala : listaSalas) {
+                // Exibe as salas disponíveis para reserva
+                for (Sala sala : listaSalas) {
+                    if (!sala.isStatus()) {
                         System.out.println(sala.getNome() + " -> " + sala.getCapacidade() + " pessoas");
-                    }
-                } else { // Exibe apenas as salas disponíveis
-                    for (Sala sala : listaSalas) {
-                        if (!sala.isStatus()) {
-                            System.out.println(sala.getNome() + " -> " + sala.getCapacidade() + " pessoas");
-                        }
                     }
                 }
 
@@ -87,6 +84,22 @@ public class App {
                         System.out.println(reserva);
                     }
                 }
+            }
+            else if (opc == 'c') {
+                System.out.println("Qual reserva deseja cancelar? (id): ");
+                int id = sc.nextInt();
+
+                for (int i = 0; i < listaReservas.size(); i++) {
+                    // Remove a reserva escolhida e altera o status da sala
+                    if (listaReservas.get(i).getId() == id) {
+                        Reserva reservaCancelada = listaReservas.remove(i);
+                        reservaCancelada.getSalaReservada().setStatus(false);
+                        System.out.println("Reserva cancelada!");
+                        break;
+                    }
+                }
+
+                sc.nextLine();
             }
             else if (opc == 'e') {
                 laco = false;
